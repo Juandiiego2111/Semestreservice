@@ -6,43 +6,76 @@ import com.example.semestreservice.service.SemestreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/semestres")
+@RequestMapping("/api/v1/semestre-service")
 @RequiredArgsConstructor
 public class SemestreController {
     private final SemestreService semestreService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public SemestreResponse crearSemestre(@Valid @RequestBody SemestreRequest request) {
-        return semestreService.crearSemestre(request);
+    // Listar todos los semestres
+    @GetMapping("/semestres")
+    public ResponseEntity<Map<String, Object>> listarSemestres() {
+        List<SemestreResponse> lista = semestreService.listarSemestres();
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("message", "Semestres obtenidos exitosamente");
+        resp.put("semestres", lista);
+        return ResponseEntity.ok(resp);
     }
 
-    @GetMapping
-    public List<SemestreResponse> listarSemestres() {
-        return semestreService.listarSemestres();
+    // Paginación de semestres
+    @GetMapping("/semestre/page/{page}")
+    public ResponseEntity<Map<String, Object>> listarSemestresPaginados(@PathVariable int page) {
+        Map<String, Object> pageData = semestreService.listarSemestresPaginados(page);
+        pageData.put("message", "Semestres paginados obtenidos exitosamente");
+        return ResponseEntity.ok(pageData);
     }
 
-    @GetMapping("/{id}")
-    public SemestreResponse obtenerSemestre(@PathVariable Long id) {
-        return semestreService.obtenerSemestre(id);
+    // Crear un nuevo semestre
+    @PostMapping("/semestres")
+    public ResponseEntity<Map<String, Object>> crearSemestre(
+            @Valid @RequestBody SemestreRequest request) {
+        SemestreResponse creado = semestreService.crearSemestre(request);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("message", "Semestre creado exitosamente");
+        resp.put("semestre", creado);
+        return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public SemestreResponse actualizarSemestre(
+    // Obtener un semestre por ID
+    @GetMapping("/semestres/{id}")
+    public ResponseEntity<Map<String, Object>> obtenerSemestre(@PathVariable Long id) {
+        SemestreResponse dto = semestreService.obtenerSemestre(id);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("message", "Semestre obtenido exitosamente");
+        resp.put("semestre", dto);
+        return ResponseEntity.ok(resp);
+    }
+
+    // Actualizar un semestre existente
+    @PutMapping("/semestres/{id}")
+    public ResponseEntity<Map<String, Object>> actualizarSemestre(
             @PathVariable Long id,
             @Valid @RequestBody SemestreRequest request) {
-        return semestreService.actualizarSemestre(id, request);
+        SemestreResponse updated = semestreService.actualizarSemestre(id, request);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("message", "Semestre actualizado exitosamente");
+        resp.put("semestre", updated);
+        return ResponseEntity.ok(resp);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void eliminarSemestre(@PathVariable Long id) {
+    // Eliminar un semestre por ID
+    @DeleteMapping("/semestres/{id}")
+    public ResponseEntity<Map<String, Object>> eliminarSemestre(@PathVariable Long id) {
         semestreService.eliminarSemestre(id);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("message", "Semestre eliminado exitosamente");
+        return ResponseEntity.ok(resp);
     }
-
 }

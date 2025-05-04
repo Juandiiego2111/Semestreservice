@@ -6,10 +6,15 @@ import com.example.semestreservice.exception.ResourceNotFoundException;
 import com.example.semestreservice.model.Semestre;
 import com.example.semestreservice.repository.SemestreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +71,21 @@ public class SemestreService {
             throw new ResourceNotFoundException("Semestre", "id", id);
         }
         semestreRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> listarSemestresPaginados(int page) {
+        int pageSize = 10; // tamaño de página, puedes parametrizar
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Semestre> pageResult = semestreRepository.findAll(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("semestres", pageResult.getContent());
+        response.put("currentPage", pageResult.getNumber());
+        response.put("totalItems", pageResult.getTotalElements());
+        response.put("totalPages", pageResult.getTotalPages());
+
+        return response;
     }
 
     private SemestreResponse mapToResponse(Semestre semestre) {
