@@ -1,0 +1,10 @@
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2024-1', '2024-01-10', '2024-06-30', true);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2024-2', '2024-07-10', '2024-12-15', true);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2023-1', '2023-01-15', '2023-06-25', false);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2023-2', '2023-07-15', '2023-12-20', false);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2022-1', '2022-01-10', '2022-06-30', true);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2022-2', '2022-07-10', '2022-12-15', true);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2021-1', '2021-01-12', '2021-06-28', false);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2021-2', '2021-07-12', '2021-12-10', false);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2020-1', '2020-01-05', '2020-06-22', true);
+INSERT INTO semestres (nombre, fecha_inicio, fecha_fin, activo) VALUES ('2020-2', '2020-07-05', '2020-12-01', true);
