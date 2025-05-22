@@ -1,8 +1,10 @@
 package com.example.semestreservice.service;
 
+import com.example.semestreservice.service.IProgramaClient;
 import com.example.semestreservice.dto.SemestreRequest;
 import com.example.semestreservice.dto.SemestreResponse;
 import com.example.semestreservice.exception.ResourceNotFoundException;
+import com.example.semestreservice.model.ProgramaDTO;
 import com.example.semestreservice.model.Semestre;
 import com.example.semestreservice.repository.SemestreRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +21,14 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class SemestreService {
+
     private final SemestreRepository semestreRepository;
+    private final IProgramaClient programaClient;
 
     @Transactional
     public SemestreResponse crearSemestre(SemestreRequest request) {
         validarFechas(request);
+        validarPrograma(request.idPrograma()); // valida existencia del programa
 
         Semestre semestre = new Semestre();
         semestre.setNombre(request.nombre());
@@ -52,6 +57,7 @@ public class SemestreService {
     @Transactional
     public SemestreResponse actualizarSemestre(Long id, SemestreRequest request) {
         validarFechas(request);
+        validarPrograma(request.idPrograma()); // valida existencia del programa
 
         Semestre semestre = semestreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Semestre", "id", id));
@@ -75,7 +81,7 @@ public class SemestreService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> listarSemestresPaginados(int page) {
-        int pageSize = 10; // tamaño de página, puedes parametrizar
+        int pageSize = 10;
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Semestre> pageResult = semestreRepository.findAll(pageable);
 
@@ -94,13 +100,25 @@ public class SemestreService {
                 semestre.getNombre(),
                 semestre.getFechaInicio(),
                 semestre.getFechaFin(),
-                semestre.isActivo()
+                semestre.getActivo()
         );
     }
 
     private void validarFechas(SemestreRequest request) {
         if (request.fechaFin().isBefore(request.fechaInicio())) {
             throw new IllegalArgumentException("La fecha de fin debe ser posterior a la fecha de inicio");
+        }
+    }
+
+    private void validarPrograma(Long idPrograma) {
+        Map<String, List<ProgramaDTO>> response = programaClient.obtenerProgramas();
+        List<ProgramaDTO> programas = response.get("programas"); // asegúrate que la clave coincida con tu JSON
+
+        boolean existe = programas.stream()
+                .anyMatch(p -> p.getId().equals(idPrograma));
+
+        if (!existe) {
+            throw new ResourceNotFoundException("Programa", "id", idPrograma);
         }
     }
 }

@@ -1,0 +1,72 @@
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  server:
+    port: 8084
+
+spring:
+  application:
+    name: semestre-service
+  main:
+    allow-circular-references: true
+  datasource:
+    hikari:
+      validation-timeout: 5000
+      idle-timeout: 600000
+      maximum-pool-size: 50
+      connection-timeout: 30000
+      keepalive-time: 300000
+      max-lifetime: 1800000
+      connection-test-query: SELECT 1
+      minimum-idle: 10
+    driver-class-name: org.postgresql.Driver
+    password: ${DB_PASS:juandiego21}
+    username: ${DB_USER:postgres}
+    url: ${DB_HOST:jdbc:postgresql://localhost:5432/semestresdb}
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL:create-drop}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+  circuitbreaker:
+    enabled: true
+
+programa-service:
+  ribbon:
+    listOfServers: http://programa-service:8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+      springframework: INFO
+    com:
+      example: DEBUG

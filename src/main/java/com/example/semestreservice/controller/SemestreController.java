@@ -17,19 +17,18 @@ import java.util.Map;
 @RequestMapping("/api/v1/semestre-service")
 @RequiredArgsConstructor
 public class SemestreController {
+
     private final SemestreService semestreService;
 
-    // Listar todos los semestres
     @GetMapping("/semestres")
     public ResponseEntity<Map<String, Object>> listarSemestres() {
         List<SemestreResponse> lista = semestreService.listarSemestres();
         Map<String, Object> resp = new HashMap<>();
-        resp.put("message", "Semestres obtenidos exitosamente");
+        resp.put("message", lista.isEmpty() ? "No hay semestres registrados" : "Semestres obtenidos exitosamente");
         resp.put("semestres", lista);
         return ResponseEntity.ok(resp);
     }
 
-    // Paginación de semestres
     @GetMapping("/semestre/page/{page}")
     public ResponseEntity<Map<String, Object>> listarSemestresPaginados(@PathVariable int page) {
         Map<String, Object> pageData = semestreService.listarSemestresPaginados(page);
@@ -37,7 +36,6 @@ public class SemestreController {
         return ResponseEntity.ok(pageData);
     }
 
-    // Crear un nuevo semestre
     @PostMapping("/semestres")
     public ResponseEntity<Map<String, Object>> crearSemestre(
             @Valid @RequestBody SemestreRequest request) {
@@ -48,7 +46,6 @@ public class SemestreController {
         return new ResponseEntity<>(resp, HttpStatus.CREATED);
     }
 
-    // Obtener un semestre por ID
     @GetMapping("/semestres/{id}")
     public ResponseEntity<Map<String, Object>> obtenerSemestre(@PathVariable Long id) {
         SemestreResponse dto = semestreService.obtenerSemestre(id);
@@ -58,7 +55,6 @@ public class SemestreController {
         return ResponseEntity.ok(resp);
     }
 
-    // Actualizar un semestre existente
     @PutMapping("/semestres/{id}")
     public ResponseEntity<Map<String, Object>> actualizarSemestre(
             @PathVariable Long id,
@@ -70,7 +66,6 @@ public class SemestreController {
         return ResponseEntity.ok(resp);
     }
 
-    // Eliminar un semestre por ID
     @DeleteMapping("/semestres/{id}")
     public ResponseEntity<Map<String, Object>> eliminarSemestre(@PathVariable Long id) {
         semestreService.eliminarSemestre(id);
