@@ -29,10 +29,6 @@ public class Semestre {
     @Column(nullable = false)
     private String nombre;
 
-    @NotNull(message = "Debe ingresar el número del semestre")
-    @Range(min = 1, max = 10, message = "El semestre debe estar en un rango del 1 al 10")
-    @Column(name = "numero_semestre", nullable = false)
-    private Integer numeroSemestre;
 
     @NotNull(message = "Debe ingresar la fecha de inicio del semestre")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
